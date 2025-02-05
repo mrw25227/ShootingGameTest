@@ -18,4 +18,11 @@ public class EventManager
     {
         OnControllerClick?.Invoke(input);
     }
+
+    public delegate void OnShootingClickEvent();
+    public event OnShootingClickEvent OnShootingClick;
+    public void OnShootingClickInvoke()
+    {
+        OnShootingClick?.Invoke();
+    }
 }
