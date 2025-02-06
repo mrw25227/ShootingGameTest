@@ -6,6 +6,7 @@ public class BulletNormal : Bullet
     void Start()
     {
         speed = 8.0f;
+        attack = 10;
         ComeFrom = BulletComeFrom.PLAYER;
         Destroy(gameObject, 20 / speed);
     }
@@ -16,5 +17,6 @@ public class BulletNormal : Bullet
         transform.Translate(Vector3.right * speed * Time.deltaTime);
     }
 
-     
+    
+
 }
