@@ -7,7 +7,6 @@ public class BulletNormal : Bullet
     {
         speed = 8.0f;
         attack = 10;
-        ComeFrom = BulletComeFrom.PLAYER;
         Destroy(gameObject, 20 / speed);
     }
 

@@ -19,10 +19,22 @@ public class EventManager
         OnControllerClick?.Invoke(input);
     }
 
-    public delegate void OnShootingClickEvent();
-    public event OnShootingClickEvent OnShootingClick;
+    public delegate void OnNormalGameEvent();
+    public event OnNormalGameEvent OnShootingClick;
     public void OnShootingClickInvoke()
     {
         OnShootingClick?.Invoke();
+    }
+
+    public event OnNormalGameEvent OnBossDeath;
+    public void OnBossDeathInvoke()
+    {
+        OnBossDeath?.Invoke();
+    }
+
+    public event OnNormalGameEvent OnPlayerBeHit;
+    public void OnPlayerBeHitInvoke() 
+    {
+        OnPlayerBeHit?.Invoke();
     }
 }

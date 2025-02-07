@@ -15,10 +15,16 @@ public class EnemyMotion: MonoBehaviour
     public Vector2 bornPos;
 
     private float moveBack = 1;
+    protected bool isStart = true;
+
+    private void Start()
+    {
+        StartAction();
+    }
 
     private void Update()
     {
-        if (!isDeath)
+        if (!isDeath && isStart)
         {
 
             MoveAction();
@@ -26,10 +32,13 @@ public class EnemyMotion: MonoBehaviour
         }
     }
 
-    public void HittedAction(int attack)
+    public void BeHitAction(int attack)
     {
         if (isDeath) return;
+
+        Debug.Log("get attack life: " + life);
         life -= attack;
+        LifeReduceAction();
         if (life <= 0) 
         {
             isDeath = true;
@@ -37,9 +46,14 @@ public class EnemyMotion: MonoBehaviour
         }
     }
 
+    public virtual void LifeReduceAction()
+    {
+
+    }
+
     public virtual void DestroyAction()
     {
-        Destroy(gameObject, 3);
+        Destroy(gameObject, 0.5f);
     }
     public virtual void StartAction()
     {
@@ -106,14 +120,12 @@ public class EnemyMotion: MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("OnTriggerEnter ");
         if (other.tag == "Bullet")
         {
             var bullet = other.gameObject.GetComponent<Bullet>();
             if(bullet != null)
             {
-                HittedAction(bullet.getAttack());
-                Debug.Log("get attack life: " + life);
+                BeHitAction(bullet.getAttack());
             }
             
         }

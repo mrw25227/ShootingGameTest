@@ -3,12 +3,14 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float moveSpeed = 1f;
-    public float lastShootTime = -1000000f;
-    public float shootCooldownTimeSec = 0.2f;
+    float lastShootTime = -1000000f;
+    float shootCooldownTimeSec = 0.2f;
     private bool isMoveing;
     private Vector2 moveInput;
     [SerializeField]
     GameObject bullet;
+
+    private float invincibleTime = 0;
 
     private void Awake()
     {
@@ -24,13 +26,16 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        invincibleTime = 2;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(invincibleTime > 0)
+        {
+            invincibleTime -= Time.deltaTime;
+        }
         
     }
 
@@ -68,6 +73,28 @@ public class Player : MonoBehaviour
             var bulletObject = Instantiate(bullet, transform.position + Vector3.right, Quaternion.identity);
             
         }        
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("OnTriggerEnter2D Player");
+        if ((collision.tag == "Enemy" || collision.tag == "EnemyBullet") && invincibleTime <= 0)
+        {
+            Debug.Log("beHit");
+            invincibleTime = 3;
+            EventManager.Instance.OnPlayerBeHitInvoke();
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        Debug.Log("OnTriggerStay Player");
+        if ((collision.tag == "Enemy" || collision.tag == "EnemyBullet") && invincibleTime <= 0)
+        {
+            Debug.Log("beHit");
+            invincibleTime = 3;
+            EventManager.Instance.OnPlayerBeHitInvoke();
+        }
     }
 
 }
