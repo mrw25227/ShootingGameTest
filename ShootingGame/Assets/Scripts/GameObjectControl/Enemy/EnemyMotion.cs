@@ -15,10 +15,19 @@ public class EnemyMotion: MonoBehaviour
     public Vector2 bornPos;
 
     private float moveBack = 1;
+    protected float destroyTime = 0.5f;
     protected bool isStart = true;
+    AudioSource destroySound;
+    GameObject explosionEffect;
+    Animator animator;
+    float beHitTime = 0f;
+
 
     private void Start()
     {
+        destroySound = GetComponent<AudioSource>();
+        explosionEffect = transform.Find("ExplosionEffect").gameObject;
+        animator = GetComponent<Animator>();
         StartAction();
     }
 
@@ -29,6 +38,15 @@ public class EnemyMotion: MonoBehaviour
 
             MoveAction();
             ShootAtion();
+            if (beHitTime > 0 && animator != null)
+            {
+                Debug.Log("beHitAnimation beHitTime: " + beHitTime);
+                beHitTime -= Time.deltaTime;
+                if(beHitTime <= 0)
+                {
+                    animator.SetBool("beHit", false);
+                }
+            }
         }
     }
 
@@ -36,13 +54,26 @@ public class EnemyMotion: MonoBehaviour
     {
         if (isDeath) return;
 
-        Debug.Log("get attack life: " + life);
         life -= attack;
+        Debug.Log("get attack life: " + life);
         LifeReduceAction();
         if (life <= 0) 
         {
+            if (animator != null)
+            {
+                animator.SetBool("beHit", false);
+            }
             isDeath = true;
             DestroyAction();
+        }
+        else
+        {
+            Debug.Log("beHitAnimation" );
+            if (animator != null) 
+            {
+                beHitTime = 1f;
+                animator.SetBool("beHit", true);
+            }
         }
     }
 
@@ -53,7 +84,15 @@ public class EnemyMotion: MonoBehaviour
 
     public virtual void DestroyAction()
     {
-        Destroy(gameObject, 0.5f);
+        Destroy(gameObject, destroyTime);
+        if (destroySound != null)
+        {
+            destroySound.Play();
+        }
+        if(explosionEffect != null)
+        {
+            explosionEffect.SetActive(true);
+        }
     }
     public virtual void StartAction()
     {
@@ -94,7 +133,6 @@ public class EnemyMotion: MonoBehaviour
         if (pos.x > StaticData.fieldBoundX || pos.x < -StaticData.fieldBoundX || pos.y > StaticData.fieldBoundY || pos.y < -StaticData.fieldBoundY)
         {
             moveBack *= -1;
-            Debug.Log("MoveOn2point MoveBack: " + moveBack + " ori: " + transform.position + " pos: "  + pos);
         }
         else
         {

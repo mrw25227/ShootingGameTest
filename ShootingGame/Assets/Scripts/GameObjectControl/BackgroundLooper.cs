@@ -23,7 +23,6 @@ public class BackgroundLooper : MonoBehaviour
     void Update()
     {
         if (stop) return;
-        Debug.Log("loop X " + offsetX + " Y "+ offsetY);
         offsetX += Time.deltaTime * speedX / 10f;
         offsetY += Time.deltaTime * speedY / 10f;
         material.SetTextureOffset("_MainTex", new Vector2(offsetX, offsetY));

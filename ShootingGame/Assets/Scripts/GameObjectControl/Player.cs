@@ -9,13 +9,20 @@ public class Player : MonoBehaviour
     private Vector2 moveInput;
     [SerializeField]
     GameObject bullet;
-
+    [SerializeField]
+    Animator animator;
+    [SerializeField]
+    AudioSource hitSound;
+    [SerializeField]
+    GameObject destroyEffect, normalSprite;
     private float invincibleTime = 0;
 
     private void Awake()
     {
         EventManager.Instance.OnControllerClick += Move;
         EventManager.Instance.OnShootingClick += Shoot;
+        invincibleTime = 2f;
+        animator.SetBool("InvincibleMode", true);
     }
     private void OnDestroy()
     {
@@ -26,7 +33,7 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        invincibleTime = 2;
+        
     }
 
     // Update is called once per frame
@@ -35,12 +42,18 @@ public class Player : MonoBehaviour
         if(invincibleTime > 0)
         {
             invincibleTime -= Time.deltaTime;
+            if(invincibleTime <= 0)
+            {
+                animator.SetBool("InvincibleMode", false);
+                
+            }
         }
         
     }
 
     void Move(Vector2 input)
     {
+        if (StaticData.life == 0) return;
         //Debug.Log(input);
         var targetPos = transform.position;
         targetPos.x += input.x * moveSpeed * Time.deltaTime;
@@ -78,22 +91,37 @@ public class Player : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("OnTriggerEnter2D Player");
-        if ((collision.tag == "Enemy" || collision.tag == "EnemyBullet") && invincibleTime <= 0)
+        if ((collision.tag == "Enemy" || collision.tag == "EnemyBullet") && invincibleTime <= 0 && StaticData.life != 0)
         {
-            Debug.Log("beHit");
-            invincibleTime = 3;
-            EventManager.Instance.OnPlayerBeHitInvoke();
+            OnBeHit();
         }
     }
 
     void OnTriggerStay2D(Collider2D collision)
     {
         Debug.Log("OnTriggerStay Player");
-        if ((collision.tag == "Enemy" || collision.tag == "EnemyBullet") && invincibleTime <= 0)
+        if ((collision.tag == "Enemy" || collision.tag == "EnemyBullet") && invincibleTime <= 0 && StaticData.life != 0)
         {
-            Debug.Log("beHit");
-            invincibleTime = 3;
-            EventManager.Instance.OnPlayerBeHitInvoke();
+            OnBeHit();
+        }
+    }
+
+    void OnBeHit()
+    {
+        Debug.Log("beHit");
+        EventManager.Instance.OnPlayerBeHitInvoke();
+        if (StaticData.life == 0)
+        {
+            normalSprite.SetActive(false);
+            destroyEffect.SetActive(true);
+            Destroy(gameObject, 1.5f);
+        }
+        else
+        {
+            invincibleTime = 2f;
+            animator.SetBool("InvincibleMode", true);
+            hitSound.Play();
+            
         }
     }
 

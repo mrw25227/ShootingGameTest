@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,10 +10,14 @@ public class Boss1Motion : EnemyMotion
     float cooldown = 1f;
     float lastShootTime = -1000000f;
     int shootMode = 0;
+    
     private void Awake()
     {
         isStart = false;
+        destroyTime = 2.5f;
     }
+
+    
     public override void StartAction()
     {
         objectTweener = transform.DOMoveX(5, 3);
@@ -61,7 +66,8 @@ public class Boss1Motion : EnemyMotion
 
     public override void DestroyAction()
     {
-        Destroy(gameObject, 3);
+        base.DestroyAction();
         EventManager.Instance.OnBossDeathInvoke();
     }
+
 }

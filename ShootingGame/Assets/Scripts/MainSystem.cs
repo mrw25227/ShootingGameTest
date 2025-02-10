@@ -31,6 +31,7 @@ public class MainSystem : MonoBehaviour
     private void OnDestroy()
     {
         EventManager.Instance.OnBossDeath -= OnBossDeath;
+        EventManager.Instance.OnPlayerBeHit -= OnLifeChange;
     }
 
     // Update is called once per frame
