@@ -37,4 +37,11 @@ public class EventManager
     {
         OnPlayerBeHit?.Invoke();
     }
+
+    public delegate void OnGetScoreEvent(int value);
+    public event OnGetScoreEvent OnGetScore;
+    public void OnGetScoreInvoke(int value)
+    {
+        OnGetScore?.Invoke(value);
+    }
 }

@@ -101,6 +101,7 @@ public class EnemyMotion: MonoBehaviour
             explosionEffect.SetActive(true);
         }
         mainSprite.SetActive(false);
+        EventManager.Instance.OnGetScoreInvoke(score);
     }
     public virtual void StartAction()
     {

@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class MainSystem : MonoBehaviour
@@ -10,6 +12,12 @@ public class MainSystem : MonoBehaviour
 
     [SerializeField]
     Text lifeText;
+
+    [SerializeField]
+    Text scoreText;
+
+    int score = 0;
+    Queue<int> scoreQueue = new Queue<int>();
 
     private void Awake()
     {
@@ -25,8 +33,11 @@ public class MainSystem : MonoBehaviour
     {
         EventManager.Instance.OnBossDeath += OnBossDeath;
         EventManager.Instance.OnPlayerBeHit += OnLifeChange;
+        EventManager.Instance.OnGetScore += OnGetScore;
         StaticData.life = 5;
+        score = 0;
         lifeText.text = "life: " + StaticData.life;
+        scoreText.text = score.ToString();
     }
     private void OnDestroy()
     {
@@ -37,7 +48,11 @@ public class MainSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(scoreQueue.Count != 0)
+        {
+            score += scoreQueue.Dequeue();
+            scoreText.text = score.ToString();
+        }
     }
 
     void OnBossDeath()
@@ -72,5 +87,10 @@ public class MainSystem : MonoBehaviour
     void EndGame()
     {
         endUI.SetActive(true);
+    }
+
+    void OnGetScore(int value)
+    {
+        scoreQueue.Enqueue(value);
     }
 }
