@@ -20,7 +20,7 @@ public class Boss1Motion : EnemyMotion
     
     public override void StartAction()
     {
-        objectTweener = transform.DOMoveX(5, 3);
+        objectTweener = transform.DOMoveX(5, 1.5f);
         objectTweener.OnStepComplete(() => isStart = true);
     }
 

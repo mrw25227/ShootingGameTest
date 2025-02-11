@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 933a27b2e47ee0b45b478beb04a00c1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 150
+  life: 300
   moveType: 2
   moveAngle: 90
   moveSpeed: 3
