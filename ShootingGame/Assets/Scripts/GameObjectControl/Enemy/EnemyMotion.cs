@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 
 public class EnemyMotion: MonoBehaviour
@@ -12,7 +13,6 @@ public class EnemyMotion: MonoBehaviour
 
     public GameObject[] bullet;
 
-    public Vector2 bornPos;
 
     private float moveBack = 1;
     protected float destroyTime = 0.5f;
@@ -21,14 +21,21 @@ public class EnemyMotion: MonoBehaviour
     GameObject explosionEffect;
     Animator animator;
     float beHitTime = 0f;
-
+    public int score = 10;
+    public float lifeTime = 3;
+    GameObject mainSprite;
 
     private void Start()
     {
         destroySound = GetComponent<AudioSource>();
         explosionEffect = transform.Find("ExplosionEffect").gameObject;
         animator = GetComponent<Animator>();
+        mainSprite = transform.Find("Sprite").gameObject;
         StartAction();
+        if(lifeTime > 0)
+        {
+            Destroy(gameObject, lifeTime);
+        }
     }
 
     private void Update()
@@ -93,6 +100,7 @@ public class EnemyMotion: MonoBehaviour
         {
             explosionEffect.SetActive(true);
         }
+        mainSprite.SetActive(false);
     }
     public virtual void StartAction()
     {
@@ -109,6 +117,9 @@ public class EnemyMotion: MonoBehaviour
                 break;
             case MoveType.MOVE_ON_2_POINT:
                 MoveOn2point();
+                break;
+            case MoveType.MOVE_FOWARD_2_POINT:
+                MoveFowardOn2point();
                 break;
         }
     }
@@ -127,10 +138,14 @@ public class EnemyMotion: MonoBehaviour
     {
 
         var pos = transform.position;
+        var oldPos = transform.position;
         var radians = moveAngle * Mathf.Deg2Rad;
         pos.x += moveBack * Mathf.Cos(radians) * moveSpeed * Time.deltaTime;
         pos.y += moveBack * Mathf.Sin(radians) * moveSpeed * Time.deltaTime;
-        if (pos.x > StaticData.fieldBoundX || pos.x < -StaticData.fieldBoundX || pos.y > StaticData.fieldBoundY || pos.y < -StaticData.fieldBoundY)
+        if ((pos.x > oldPos.x && pos.x > StaticData.fieldBoundX)
+            || (pos.x < oldPos.x && pos.x < -StaticData.fieldBoundX) 
+            ||(pos.y > oldPos.y && pos.y > StaticData.fieldBoundY)
+            ||(pos.y < oldPos.y && pos.y < -StaticData.fieldBoundY))
         {
             moveBack *= -1;
         }
@@ -139,6 +154,25 @@ public class EnemyMotion: MonoBehaviour
             transform.position = pos;
         }
         
+    }
+
+    void MoveFowardOn2point()
+    {
+        var pos = transform.position;
+        var oldPos = transform.position;
+        var radians = moveAngle * Mathf.Deg2Rad;
+        pos.x +=  -1 * moveSpeed * Time.deltaTime;
+        pos.y += moveBack * Mathf.Sin(radians) * moveSpeed * Time.deltaTime;
+        if ( (pos.y > oldPos.y && pos.y > StaticData.fieldBoundY)
+            || (pos.y < oldPos.y && pos.y < -StaticData.fieldBoundY))
+        {
+            moveBack *= -1;
+        }
+        else
+        {
+            transform.position = pos;
+        }
+
     }
 
     public virtual void ShootAtion()
@@ -153,6 +187,7 @@ public class EnemyMotion: MonoBehaviour
         MOTIONLESS,
         STRAIGHT,
         MOVE_ON_2_POINT,
+        MOVE_FOWARD_2_POINT,
         OTHER
     }
 
