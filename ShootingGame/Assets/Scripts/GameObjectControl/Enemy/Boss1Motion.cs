@@ -57,7 +57,7 @@ public class Boss1Motion : EnemyMotion
 
     public override void LifeReduceAction()
     {
-        if (life < 100)
+        if (life < 300)
         {
             shootMode = 1;
             cooldown = 0.5f;

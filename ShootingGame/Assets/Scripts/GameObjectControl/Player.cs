@@ -5,14 +5,12 @@ public class Player : MonoBehaviour
     public float moveSpeed = 1f;
     float lastShootTime = -1000000f;
     float shootCooldownTimeSec = 0.2f;
-    private bool isMoveing;
-    private Vector2 moveInput;
     [SerializeField]
     GameObject bullet;
     [SerializeField]
     Animator animator;
     [SerializeField]
-    AudioSource hitSound;
+    AudioSource hitSound, shootSound;
     [SerializeField]
     GameObject destroyEffect, normalSprite;
     private float invincibleTime = 0;
@@ -84,7 +82,7 @@ public class Player : MonoBehaviour
         {
             lastShootTime = currentTime;
             var bulletObject = Instantiate(bullet, transform.position + Vector3.right, Quaternion.identity);
-            
+            shootSound.Play();
         }        
     }
 

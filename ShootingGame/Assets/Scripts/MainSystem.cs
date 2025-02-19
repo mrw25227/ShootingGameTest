@@ -8,7 +8,7 @@ public class MainSystem : MonoBehaviour
 {
 
     [SerializeField]
-    GameObject endUI;
+    CanvasGroup endUI;
 
     [SerializeField]
     Text lifeText;
@@ -36,7 +36,7 @@ public class MainSystem : MonoBehaviour
         EventManager.Instance.OnGetScore += OnGetScore;
         StaticData.life = 5;
         score = 0;
-        lifeText.text = "life: " + StaticData.life;
+        lifeText.text = "Life: " + StaticData.life;
         scoreText.text = score.ToString();
     }
     private void OnDestroy()
@@ -77,7 +77,7 @@ public class MainSystem : MonoBehaviour
             return;
         }
         StaticData.life--;
-        lifeText.text = "life: " + StaticData.life;
+        lifeText.text = "Life: " + StaticData.life;
         if (StaticData.life == 0) 
         {
             EndGame();
@@ -86,7 +86,9 @@ public class MainSystem : MonoBehaviour
 
     void EndGame()
     {
-        endUI.SetActive(true);
+        endUI.alpha = 1;
+        endUI.interactable = true;
+        endUI.blocksRaycasts = true;
     }
 
     void OnGetScore(int value)

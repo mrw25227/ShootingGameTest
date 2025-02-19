@@ -23,14 +23,14 @@ public class EnemyMotion: MonoBehaviour
     float beHitTime = 0f;
     public int score = 10;
     public float lifeTime = 3;
-    GameObject mainSprite;
+    SpriteRenderer mainSprite;
 
     private void Start()
     {
         destroySound = GetComponent<AudioSource>();
         explosionEffect = transform.Find("ExplosionEffect").gameObject;
         animator = GetComponent<Animator>();
-        mainSprite = transform.Find("Sprite").gameObject;
+        mainSprite = transform.Find("Sprite").GetComponent< SpriteRenderer>();
         StartAction();
         if(lifeTime > 0)
         {
@@ -47,7 +47,6 @@ public class EnemyMotion: MonoBehaviour
             ShootAtion();
             if (beHitTime > 0 && animator != null)
             {
-                Debug.Log("beHitAnimation beHitTime: " + beHitTime);
                 beHitTime -= Time.deltaTime;
                 if(beHitTime <= 0)
                 {
@@ -75,7 +74,6 @@ public class EnemyMotion: MonoBehaviour
         }
         else
         {
-            Debug.Log("beHitAnimation" );
             if (animator != null) 
             {
                 beHitTime = 1f;
@@ -91,7 +89,12 @@ public class EnemyMotion: MonoBehaviour
 
     public virtual void DestroyAction()
     {
-        Destroy(gameObject, destroyTime);
+        var collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+        }
+        
         if (destroySound != null)
         {
             destroySound.Play();
@@ -100,8 +103,10 @@ public class EnemyMotion: MonoBehaviour
         {
             explosionEffect.SetActive(true);
         }
-        mainSprite.SetActive(false);
+        mainSprite.enabled = false;
         EventManager.Instance.OnGetScoreInvoke(score);
+
+        Destroy(gameObject, destroyTime);
     }
     public virtual void StartAction()
     {
