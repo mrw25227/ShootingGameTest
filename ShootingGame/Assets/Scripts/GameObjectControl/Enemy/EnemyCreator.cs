@@ -27,8 +27,9 @@ public class EnemyCreator : MonoBehaviour
     private void Start()
     {
         RadomEnemyCreateCoroutine = RadomEnemyCreateEnumerator(enemyCreateIntervalTime);
-        StartCoroutine(RadomEnemyCreateCoroutine);
         player = GameObject.Find("Player");
+        StartCoroutine(RadomEnemyCreateCoroutine);
+        
     }
 
     // Update is called once per frame
@@ -94,10 +95,10 @@ public class EnemyCreator : MonoBehaviour
 
     private IEnumerator RadomEnemyCreateEnumerator(float intervalTime)
     {
-        while (!isBossBorn)
-        {
-            yield return new WaitForSeconds(intervalTime);
+        while (!isBossBorn && player)
+        {            
             RadomEnemyCreate();
+            yield return new WaitForSeconds(intervalTime);
         }
     }
 }

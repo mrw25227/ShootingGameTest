@@ -16,8 +16,15 @@ public class MainSystem : MonoBehaviour
     [SerializeField]
     Text scoreText;
 
+    [SerializeField]
+    LocalDataSaveModel saveData;
+
+    [SerializeField]
+    Text endMenuText;
+
     int score = 0;
     Queue<int> scoreQueue = new Queue<int>();
+    bool isGameOver = false;
 
     private void Awake()
     {
@@ -38,6 +45,7 @@ public class MainSystem : MonoBehaviour
         score = 0;
         lifeText.text = "Life: " + StaticData.life;
         scoreText.text = score.ToString();
+
     }
     private void OnDestroy()
     {
@@ -51,13 +59,26 @@ public class MainSystem : MonoBehaviour
         if(scoreQueue.Count != 0)
         {
             score += scoreQueue.Dequeue();
-            scoreText.text = score.ToString();
+            
+            if(isGameOver && scoreQueue.Count == 0 && score > saveData.GetMinScore())
+            {
+                saveData.AddNewScore(score);
+                scoreText.text = score + " \n " + "<color=red> 新紀錄!! </color>";
+            }
+            else
+            {
+                scoreText.text = score.ToString();
+            }
         }
     }
 
     void OnBossDeath()
     {
-        EndGame();
+        if (isGameOver)
+        {
+            return;
+        }
+        EndGame(true);
     }
 
     public void OnEndBtnClick()
@@ -70,9 +91,14 @@ public class MainSystem : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void OnBackMenuBtnClick()
+    {
+        SceneManager.LoadScene("MenuScene");
+    }
+
     public void OnLifeChange()
     {
-        if(StaticData.life == 0)
+        if(isGameOver)
         {
             return;
         }
@@ -80,19 +106,32 @@ public class MainSystem : MonoBehaviour
         lifeText.text = "Life: " + StaticData.life;
         if (StaticData.life == 0) 
         {
-            EndGame();
+            EndGame(false);
         }
     }
 
-    void EndGame()
+    void EndGame(bool isWin)
     {
         endUI.alpha = 1;
         endUI.interactable = true;
         endUI.blocksRaycasts = true;
+        endMenuText.text = isWin ? "恭  喜!!" : "遊戲結束";
+        isGameOver = true;
+        if(scoreQueue.Count == 0 && score > saveData.GetMinScore())
+        {
+            saveData.AddNewScore(score);
+            scoreText.text = score + " \n " + "<color=red> 新紀錄!! </color>";
+
+        }
+        
     }
 
     void OnGetScore(int value)
     {
+        if (isGameOver)
+        {
+            return;
+        }
         scoreQueue.Enqueue(value);
     }
 }
