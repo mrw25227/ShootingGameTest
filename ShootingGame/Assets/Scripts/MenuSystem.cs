@@ -1,6 +1,11 @@
+using System.Net.Sockets;
+using System.Net;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 
 public class MenuSystem : MonoBehaviour
 {
@@ -12,12 +17,50 @@ public class MenuSystem : MonoBehaviour
     LocalDataSaveModel saveData;
 
     [SerializeField]
-    Text scoreListText; 
+    Text scoreListText;
+
+    [SerializeField]
+    Text playerText;
+
+    [SerializeField]
+    Text DebugText;
+
+    [SerializeField]
+    Button serBtn, cliBtn;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         saveData.Init();
+        GetLocalIPAddress();
+        serBtn.onClick.AddListener(serBtnClick);
+        cliBtn.onClick.AddListener(cliBtnClick);
+
+    }
+
+    private void serBtnClick()
+    {
+        var unityTransport = FindAnyObjectByType<UnityTransport>();
+        unityTransport.ConnectionData.Address = GetLocalIPAddress();
+        NetworkManager.Singleton.StartHost();
+    }
+    private void cliBtnClick()
+    {
+        NetworkManager.Singleton.StartClient();
+    }
+
+    public string GetLocalIPAddress()
+    {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+                DebugText.text = ip.ToString();
+                return ip.ToString();
+            }
+        }
+        throw new System.Exception("No network adapters with an IPv4 address in the system!");
     }
 
     // Update is called once per frame
@@ -56,6 +99,7 @@ public class MenuSystem : MonoBehaviour
 
     public void OnStartGameBtnClick()
     {
+        StaticData.isNetwork = false;
         SceneManager.LoadScene("MainScene");
     }
 
@@ -70,4 +114,24 @@ public class MenuSystem : MonoBehaviour
         scoreListText.text = scoreText;
     }
 
+
+    public void OnPlayerChangeBtnClick()
+    {
+        if(StaticData.playNo == 1)
+        {
+            StaticData.playNo = 2;
+            playerText.text = "我是2P";
+        }
+        else
+        {
+            StaticData.playNo = 1;
+            playerText.text = "我是1P";
+        }
+    }
+
+    public void OnNetworkPlayBtnClick()
+    {
+        StaticData.isNetwork = true;
+        SceneManager.LoadScene("NetworkMainScene");
+    }
 }

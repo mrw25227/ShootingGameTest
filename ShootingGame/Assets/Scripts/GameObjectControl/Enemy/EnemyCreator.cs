@@ -27,7 +27,18 @@ public class EnemyCreator : MonoBehaviour
     private void Start()
     {
         RadomEnemyCreateCoroutine = RadomEnemyCreateEnumerator(enemyCreateIntervalTime);
-        player = GameObject.Find("Player");
+        if (!StaticData.isNetwork)
+        {
+            player = GameObject.Find("Player");
+        }
+        else
+        {
+            var netPlayer  = FindAnyObjectByType<NetPlayer>();
+            if (netPlayer != null) 
+            {
+                player = netPlayer.gameObject;
+            }
+        }
         StartCoroutine(RadomEnemyCreateCoroutine);
         
     }
@@ -95,10 +106,22 @@ public class EnemyCreator : MonoBehaviour
 
     private IEnumerator RadomEnemyCreateEnumerator(float intervalTime)
     {
+        Debug.Log("RadomEnemyCreateEnumerator Start");
+        yield return new WaitForSeconds(2);
+        if(player == null)
+        {
+            var netPlayer = FindAnyObjectByType<NetPlayer>();
+            if (netPlayer != null)
+            {
+                player = netPlayer.gameObject;
+            }
+        }
+        Debug.Log("RadomEnemyCreateEnumerator isBossBorn && player");
         while (!isBossBorn && player)
         {            
             RadomEnemyCreate();
             yield return new WaitForSeconds(intervalTime);
         }
+        Debug.Log("RadomEnemyCreateEnumerator End");
     }
 }

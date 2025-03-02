@@ -78,10 +78,7 @@ public class Controller : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     }
     public void OnDrag(PointerEventData eventData)
     {
-        screenMoveInput = Camera.main.ScreenToWorldPoint(eventData.position);
-
-        Debug.LogWarning("OnDrag eventData.pointerId: " + eventData.pointerId + "eventData.position: " + screenMoveInput);
-        
+        screenMoveInput = Camera.main.ScreenToWorldPoint(eventData.position);        
     }
 
     private void DragMoveControl(Vector3 pos)

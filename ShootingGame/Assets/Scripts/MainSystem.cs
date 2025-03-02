@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
@@ -20,7 +23,12 @@ public class MainSystem : MonoBehaviour
     LocalDataSaveModel saveData;
 
     [SerializeField]
-    Text endMenuText;
+    Text endMenuText, debugText;
+
+    [SerializeField]
+    NetworkManager networkManager;
+    [SerializeField]
+    UnityTransport unityTransport;
 
     int score = 0;
     Queue<int> scoreQueue = new Queue<int>();
@@ -32,8 +40,6 @@ public class MainSystem : MonoBehaviour
         var horzExtent = vertExtent * Screen.width / Screen.height;
         StaticData.fieldBoundX = horzExtent;
         StaticData.fieldBoundY = vertExtent;
-
-
     }
 
     void Start()
@@ -45,12 +51,40 @@ public class MainSystem : MonoBehaviour
         score = 0;
         lifeText.text = "Life: " + StaticData.life;
         scoreText.text = score.ToString();
-
+        if (StaticData.isNetwork)
+        {
+            unityTransport = FindAnyObjectByType<UnityTransport>();
+            //unityTransport.ConnectionData.Address = "";
+            if (StaticData.playNo == 1)
+            {
+                
+                NetworkManager.Singleton.StartHost();
+            }
+            else
+            {
+                NetworkManager.Singleton.StartClient();
+                
+            }
+            NetworkManager.Singleton.OnConnectionEvent += OnConnectionEvent;
+        }
     }
+
+
+    private void OnConnectionEvent(NetworkManager manager, ConnectionEventData data)
+    {
+        Debug.LogWarning("OnConnectionEvent: " + data.EventType  + "  "+ data.ToString());
+    }
+
     private void OnDestroy()
     {
         EventManager.Instance.OnBossDeath -= OnBossDeath;
         EventManager.Instance.OnPlayerBeHit -= OnLifeChange;
+        EventManager.Instance.OnGetScore -= OnGetScore;
+        if (StaticData.isNetwork)
+        {
+            NetworkManager.Singleton?.Shutdown();
+            NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
+        }
     }
 
     // Update is called once per frame
@@ -69,6 +103,13 @@ public class MainSystem : MonoBehaviour
             {
                 scoreText.text = score.ToString();
             }
+        }
+        if(StaticData.isNetwork)
+        {
+            debugText.text = NetworkManager.Singleton.DisconnectReason;
+            /*var instance = Instantiate(gameObject);
+            var instanceNetworkObject = instance.GetComponent<NetworkObject>();
+            instanceNetworkObject.Spawn();*/
         }
     }
 
