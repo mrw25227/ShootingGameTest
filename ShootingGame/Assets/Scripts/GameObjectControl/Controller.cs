@@ -36,13 +36,13 @@ public class Controller : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
             if (moveInput != Vector2.zero)
             {
                 //Debug.Log("X: " + moveInput.x + ", Y: " + moveInput.y);
-                EventManager.Instance.OnControllerClickInvoke(moveInput);
+                EventManager.Instance.OnControllerClick?.Invoke(moveInput);
             }
         }
 
         if (Input.GetKey("z") || shootingBtnIsDown)
         {
-            EventManager.Instance.OnShootingClickInvoke();
+            EventManager.Instance.OnShootingClick?.Invoke();
         }
     }
        
@@ -100,7 +100,7 @@ public class Controller : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
         }
         controlBtn.position = InputTemp;
         moveInput = (InputTemp - BtnInitPos) / controllerBoundRadius;
-        EventManager.Instance.OnControllerClickInvoke(moveInput);
+        EventManager.Instance.OnControllerClick?.Invoke(moveInput);
     }
 
     public void OnShootingBtnDown(BaseEventData eventData)

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class EventManager
@@ -12,36 +13,13 @@ public class EventManager
             return instance; 
         } 
     }
-    public delegate void OnControllerClickEvent(Vector2 input);
-    public event OnControllerClickEvent OnControllerClick;
-    public void OnControllerClickInvoke(Vector2 input)
-    {
-        OnControllerClick?.Invoke(input);
-    }
+    public Action<Vector2> OnControllerClick;
 
-    public delegate void OnNormalGameEvent();
-    public event OnNormalGameEvent OnShootingClick;
-    public void OnShootingClickInvoke()
-    {
-        OnShootingClick?.Invoke();
-    }
+    public Action OnShootingClick;
 
-    public event OnNormalGameEvent OnBossDeath;
-    public void OnBossDeathInvoke()
-    {
-        OnBossDeath?.Invoke();
-    }
+    public Action OnBossDeath;
 
-    public event OnNormalGameEvent OnPlayerBeHit;
-    public void OnPlayerBeHitInvoke() 
-    {
-        OnPlayerBeHit?.Invoke();
-    }
+    public Action OnPlayerBeHit;
 
-    public delegate void OnGetScoreEvent(int value);
-    public event OnGetScoreEvent OnGetScore;
-    public void OnGetScoreInvoke(int value)
-    {
-        OnGetScore?.Invoke(value);
-    }
+    public Action<int> OnGetScore;
 }

@@ -104,7 +104,7 @@ public class EnemyMotion: MonoBehaviour
             explosionEffect.SetActive(true);
         }
         mainSprite.enabled = false;
-        EventManager.Instance.OnGetScoreInvoke(score);
+        EventManager.Instance.OnGetScore?.Invoke(score);
 
         Destroy(gameObject, destroyTime);
     }

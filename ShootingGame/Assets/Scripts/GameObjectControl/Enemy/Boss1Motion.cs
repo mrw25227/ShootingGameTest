@@ -67,7 +67,7 @@ public class Boss1Motion : EnemyMotion
     public override void DestroyAction()
     {
         base.DestroyAction();
-        EventManager.Instance.OnBossDeathInvoke();
+        EventManager.Instance.OnBossDeath?.Invoke();
     }
 
 }

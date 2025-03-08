@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
     void OnBeHit()
     {
         Debug.Log("beHit");
-        EventManager.Instance.OnPlayerBeHitInvoke();
+        EventManager.Instance.OnPlayerBeHit?.Invoke();
         if (StaticData.life == 0)
         {
             normalSprite.SetActive(false);
